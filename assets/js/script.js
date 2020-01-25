@@ -14,6 +14,7 @@ let lastID = parseInt(localStorage.getItem("lastID")) || 0;
 // 4th: function to update localStorage with latest budgetItems and latest lastID
 
 
+
 // 5th: function to render budgetItems on table; each item should be rendered in this format:
 // <tr data-id="2"><td>Oct 14, 2019 5:08 PM</td><td>November Rent</td><td>Rent/Mortgage</td><td>1300</td><td>Fill out lease renewal form!</td><td class="delete"><span>x</span></td></tr>
 // also, update total amount spent on page (based on selected category):
@@ -36,6 +37,30 @@ $("#toggleFormButton, #hideForm").on("click", function() {
 // 3rd: wire up click event on 'Add Budget Item' button, gather user input and add item to budgetItems array
 // (each item's object should include: id / date / name / category / amount / notes)... then clear the form
 // fields and trigger localStorage update/budgetItems rerender functions, once created
+$("#addItem").on("click", function(event) {
+    event.preventDefault();
+
+    const newItem = {
+        id: ++lastID, // increment and store the updated value in one step
+        date: moment().format("lll"),
+        name: $("#name").val().trim(),
+        category: $("#category").val(),
+        amount: $("#amount").val(),
+        notes: $("#notes").val().trim()
+    }
+
+    if (!newItem.name || !newItem.category || !newItem.amount) {
+        // If we fail validation
+        alert("You must specify name, category, and amount for each budget item!");
+        return false;
+    }
+
+    budgetItems.push(newItem);
+    // update localStorage
+    // rerender our budget items
+    $("#addItemForm form")[0].reset(); // hybrid of JS and JQuery to empty form once submitted
+
+});
 
 
 // 6th: wire up change event on the category select menu, show filtered budgetItems based on selection
