@@ -12,18 +12,34 @@ let lastID = parseInt(localStorage.getItem("lastID")) || 0;
 // ======================
 
 // 4th: function to update localStorage with latest budgetItems and latest lastID
-
+const updateStorage = () => {
+    localStorage.setItem("budgetItems", JSON.stringify(budgetItems));
+    localStorage.setItem("lastID", lastID);
+}
 
 
 // 5th: function to render budgetItems on table; each item should be rendered in this format:
 // <tr data-id="2"><td>Oct 14, 2019 5:08 PM</td><td>November Rent</td><td>Rent/Mortgage</td><td>1300</td><td>Fill out lease renewal form!</td><td class="delete"><span>x</span></td></tr>
 // also, update total amount spent on page (based on selected category):
+const renderItems = items => {
+    if(!items) items = budgetItems;
+    const tbody = $("#budgetItems tbody");
+    tbody.empty(); // wipes the slate clean for rerendering the new table
 
+    for (const {id, date, name, category, amount, notes} of items) {
+        const row = `<tr data-id=${id}><td>${date}</td><td>${name}</td><td>${category}</td><td>$${parseFloat(amount).toFixed(2)}</td><td>${notes}</td><td class="delete"><span>x</span></td></tr>`
+        $("#budgetItems tbody").append(row);
+    }
+
+    const total = items.reduce((accum, item) => accum + parseFloat(item.amount), 0);
+    $("#total").text(`$${total.toFixed(2)}`);
+}
 
 
 // ======================
 // MAIN PROCESS
 // ======================
+renderItems();
 
 // 2nd: wire up click event on 'Enter New Budget Item' button to toggle display of form
 $("#toggleFormButton, #hideForm").on("click", function() {
@@ -56,9 +72,9 @@ $("#addItem").on("click", function(event) {
     }
 
     budgetItems.push(newItem);
-    // update localStorage
-    // rerender our budget items
-    $("#addItemForm form")[0].reset(); // hybrid of JS and JQuery to empty form once submitted
+    updateStorage();    // update localStorage
+    renderItems();  // rerender our budget items
+    $("#addItemForm form")[0].reset();  // hybrid of JS and JQuery to empty form once submitted
 
 });
 
