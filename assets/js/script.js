@@ -72,6 +72,7 @@ $("#addItem").on("click", function(event) {
     updateStorage();    // update localStorage
     renderItems();  // rerender our budget items
     $("#addItemForm form")[0].reset();  // hybrid of JS and JQuery to empty form once submitted
+    $("#categoryFilter").val("");
 
 });
 
