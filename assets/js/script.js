@@ -3,9 +3,8 @@
 // ======================
 
 // 1st: pull initial budgetItems/lastID from localStorage to set initial variables
-const budgetItems = JSON.parse(localStorage.getItem("budgetItems")) || [];
+let budgetItems = JSON.parse(localStorage.getItem("budgetItems")) || [];
 let lastID = parseInt(localStorage.getItem("lastID")) || 0;
-
 
 // ======================
 // FUNCTIONS
@@ -16,7 +15,6 @@ const updateStorage = () => {
     localStorage.setItem("budgetItems", JSON.stringify(budgetItems));
     localStorage.setItem("lastID", lastID);
 }
-
 
 // 5th: function to render budgetItems on table; each item should be rendered in this format:
 // <tr data-id="2"><td>Oct 14, 2019 5:08 PM</td><td>November Rent</td><td>Rent/Mortgage</td><td>1300</td><td>Fill out lease renewal form!</td><td class="delete"><span>x</span></td></tr>
@@ -34,7 +32,6 @@ const renderItems = items => {
     const total = items.reduce((accum, item) => accum + parseFloat(item.amount), 0);
     $("#total").text(`$${total.toFixed(2)}`);
 }
-
 
 // ======================
 // MAIN PROCESS
@@ -78,19 +75,25 @@ $("#addItem").on("click", function(event) {
 
 });
 
-
 // 6th: wire up change event on the category select menu, show filtered budgetItems based on selection
 $("#categoryFilter").on("change", function() {
     const category = $(this).val();
-    const filteredItems = budgetItems.filter(item =>  category === item.category);
-    renderItems(filteredItems);
+   
+    if (category) {
+        const filteredItems = budgetItems.filter(item =>  category === item.category);
+        renderItems(filteredItems);
+    }
+    else { // no category chosen
+        renderItems();
+    }
 });
 
-
 // 7th: wire up click event on the delete button of a given row; on click delete that budgetItem
-
-
-
-
-
-
+$("#budgetItems").on("click", ".delete span", function() {
+    const id = parseInt($(this).parents("tr").attr("data-id"));
+    const remainingItems = budgetItems.filter(item => item.id !== id);
+    budgetItems = remainingItems;   //!!!!!
+    updateStorage();
+    renderItems();
+    $("#categoryFilter").val("");
+});
