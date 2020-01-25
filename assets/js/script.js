@@ -80,6 +80,11 @@ $("#addItem").on("click", function(event) {
 
 
 // 6th: wire up change event on the category select menu, show filtered budgetItems based on selection
+$("#categoryFilter").on("change", function() {
+    const category = $(this).val();
+    const filteredItems = budgetItems.filter(item =>  category === item.category);
+    renderItems(filteredItems);
+});
 
 
 // 7th: wire up click event on the delete button of a given row; on click delete that budgetItem
